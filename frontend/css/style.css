@@ -44,8 +44,8 @@
 
   /* Layout */
   --topbar-h:  58px;
-  --sidebar-w: 300px;
-  --right-w:   360px;
+  --sidebar-w: 380px;
+  --right-w:   440px;
   --radius:    10px;
   --radius-sm: 6px;
 }
