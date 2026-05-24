@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bridge Intelligence Dashboard — MnDOT</title>
+  <meta name="description" content="AI-powered bridge inspection intelligence dashboard for 5 Minnesota counties. Visualizes NBI condition data, extracted defects, and engineering insights." />
+
+  <!-- Leaflet CSS — map rendering -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Dashboard styles -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOP NAV BAR
+  ═══════════════════════════════════════════════════════════ -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon">🌉</div>
+      <div>
+        <div class="brand-title">Bridge Intelligence</div>
+        <div class="brand-sub">MnDOT · 5 Counties · AI-Powered Analysis</div>
+      </div>
+    </div>
+    <div class="topbar-stats" id="global-stats">
+      <!-- Populated by JS -->
+    </div>
+    <div class="topbar-right">
+      <div class="status-dot" id="api-status" title="API connection status"></div>
+      <span class="status-label" id="api-status-label">Connecting…</span>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN LAYOUT: LEFT SIDEBAR | MAP | RIGHT PANEL
+  ═══════════════════════════════════════════════════════════ -->
+  <main class="dashboard">
+
+    <!-- LEFT: County selector + Insights feed -->
+    <aside class="sidebar-left" id="sidebar-left">
+
+      <!-- Bridge Search -->
+      <section class="panel panel-search">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="bridge-search"
+            class="search-input"
+            placeholder="Search by bridge ID or road name…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="search-clear hidden" id="search-clear" title="Clear search">✕</button>
+        </div>
+        <div id="search-results" class="search-results hidden"></div>
+      </section>
+
+      <!-- County Cards -->
+      <section class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Counties</span>
+          <button class="btn-ghost" id="btn-show-all" title="Show all bridges">All</button>
+        </div>
+        <div id="county-list">
+          <div class="skeleton-list">
+            <div class="skeleton-item"></div>
+            <div class="skeleton-item"></div>
+            <div class="skeleton-item"></div>
+            <div class="skeleton-item"></div>
+            <div class="skeleton-item"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Condition Filter -->
+      <section class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Condition Filter</span>
+          <span class="filter-value" id="condition-range-label">All</span>
+        </div>
+        <div class="filter-row">
+          <label class="filter-label">Min NBI</label>
+          <input type="range" id="filter-min" min="0" max="9" value="0" class="range-input" />
+        </div>
+        <div class="filter-row">
+          <label class="filter-label">Max NBI</label>
+          <input type="range" id="filter-max" min="0" max="9" value="9" class="range-input" />
+        </div>
+        <div class="legend-row">
+          <span class="legend-dot" style="background:#22c55e"></span><span>Good (7-9)</span>
+          <span class="legend-dot" style="background:#eab308"></span><span>Fair (5-6)</span>
+          <span class="legend-dot" style="background:#f97316"></span><span>Poor (3-4)</span>
+          <span class="legend-dot" style="background:#ef4444"></span><span>Critical (0-2)</span>
+        </div>
+      </section>
+
+      <!-- Insights Feed -->
+      <section class="panel panel-insights">
+        <div class="panel-header">
+          <span class="panel-title">Insights</span>
+          <div class="insight-type-tabs" id="insight-tabs">
+            <button class="tab active" data-type="">All</button>
+            <button class="tab" data-type="trend">Trend</button>
+            <button class="tab" data-type="risk">Risk</button>
+            <button class="tab" data-type="pattern">Pattern</button>
+          </div>
+        </div>
+        <div id="insight-feed">
+          <div class="skeleton-list">
+            <div class="skeleton-item tall"></div>
+            <div class="skeleton-item tall"></div>
+            <div class="skeleton-item tall"></div>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- CENTER: Map -->
+    <section class="map-container">
+      <div id="map"></div>
+      <div class="map-overlay-info" id="map-bridge-count">
+        Loading bridges…
+      </div>
+    </section>
+
+    <!-- RIGHT: Bridge Detail Panel -->
+    <aside class="sidebar-right" id="sidebar-right">
+      <div id="bridge-placeholder" class="placeholder-message">
+        <div class="placeholder-icon">📍</div>
+        <div class="placeholder-text">Click any bridge on the map to view its inspection history and AI-extracted findings.</div>
+      </div>
+      <div id="bridge-detail" class="hidden"></div>
+    </aside>
+
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Chart.js for sparklines -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Dashboard logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

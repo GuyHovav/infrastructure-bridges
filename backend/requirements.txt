@@ -1,0 +1,65 @@
+# =============================================================================
+# Backend Dependencies
+# =============================================================================
+#
+# Dependency choices are driven by the project's dual nature:
+#   1. A data pipeline (download → parse → store → analyse)
+#   2. A REST API serving a frontend dashboard
+#
+# We pin exact versions for reproducibility across environments.
+# =============================================================================
+
+# -- Web Framework ------------------------------------------------------------
+# FastAPI was chosen over Flask/Django because:
+#   - Native async support (important for concurrent DB + LLM queries)
+#   - Automatic OpenAPI/Swagger docs from Pydantic models (living API docs)
+#   - Pydantic integration means request/response validation for free
+fastapi==0.115.5
+uvicorn[standard]==0.32.1  # ASGI server to run FastAPI; [standard] adds websocket support
+
+# -- Database -----------------------------------------------------------------
+# SQLAlchemy 2.0 provides both sync and async interfaces. We use:
+#   - Async (aiosqlite) for the FastAPI API layer — non-blocking request handling
+#   - Sync for data-loading scripts — simpler code, no event loop overhead
+# SQLite was chosen over PostgreSQL for this PoC to eliminate infrastructure
+# dependencies (no Docker/server needed). Production would use PostgreSQL+PostGIS.
+sqlalchemy==2.0.36
+aiosqlite==0.20.0  # Async SQLite driver required by SQLAlchemy's async engine
+
+# -- Data Processing ----------------------------------------------------------
+# pandas: DataFrame operations for NBI analysis (groupby, pivot, statistics)
+# numpy: Numerical computations underlying pandas and our analysis agents
+# requests: HTTP downloads of NBI files from FHWA servers
+pandas==2.2.3
+numpy==2.1.3
+requests==2.32.3
+beautifulsoup4==4.12.3  # HTML parsing for MnDOT portal scraper
+playwright==1.60.0      # Headless browser for JavaScript-rendered portals (MnDOT BOE)
+
+# -- PDF Processing -----------------------------------------------------------
+# Two complementary PDF libraries:
+#   - PyMuPDF (fitz): Fast, good at extracting embedded images from PDFs
+#   - pdfplumber: Better at extracting structured text and tables from PDFs
+# We use both because bridge inspection PDFs contain both images and tabular data.
+pymupdf==1.25.1
+pdfplumber==0.11.4
+
+# -- AI / LLM ----------------------------------------------------------------
+# LangChain provides the agent orchestration framework:
+#   - Structured output parsing (LLM → Pydantic models)
+#   - Tool-calling for agents that need to query the database
+#   - Composable chains for multi-step analysis workflows
+# We use Google Gemini models (user has Gemini Pro subscription):
+#   - gemini-2.0-flash for high-volume extraction (fast, cheap, generous quota)
+#   - gemini-2.5-pro for complex analysis agents (strongest reasoning)
+google-generativeai==0.8.6   # Official Google Gemini SDK (required by langchain-google-genai)
+langchain==0.3.25
+langchain-google-genai==2.0.10  # LangChain ↔ Gemini integration (ChatGoogleGenerativeAI)
+langchain-core==0.3.60
+
+# -- Utilities ----------------------------------------------------------------
+python-dotenv==1.0.1       # Load .env file for API keys (keeps secrets out of code)
+tqdm==4.67.1               # Progress bars for long-running data downloads/parsing
+pydantic==2.10.3           # Data validation for API schemas and LLM output parsing
+pydantic-settings==2.6.1   # Type-safe settings management from env vars
+httpx==0.27.2              # Modern async HTTP client (used by LangChain internally)
