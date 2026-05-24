@@ -129,7 +129,7 @@ Three analysis agents operate on the full database:
 | Hennepin | 053 | 947 | Largest county, densest urban infrastructure (Minneapolis) |
 | Ramsey | 123 | 346 | Urban aging infrastructure (St. Paul) |
 | St. Louis | 137 | 693 | Largest by area, diverse rural bridge types |
-| Polk | 119 | 270 | DI Global client — Rich Sanders from Polk County quoted on DI website |
+| Polk | 119 | 270 | Representative rural county with a mix of aging timber and concrete bridges along major river crossings |
 | Olmsted | 109 | 374 | Rochester area, mix of urban/rural bridges |
 
 ---
